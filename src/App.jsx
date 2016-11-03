@@ -3,6 +3,9 @@ import ChatBar from './Chatbar.jsx';
 import Message from './Message.jsx';
 import MessageList from './MessageList.jsx';
 
+var ws = new WebSocket('ws://localhost:4000/');
+
+
 var data = {
 	currentUser: {name: "Bob"},
   messages: [
@@ -27,14 +30,16 @@ class App extends Component {
 
   }
 
-  componentDidMount() {
-  setTimeout(() => {
-    const newMessage = {username: "Michelle", content: "Hello there!", msgID: 3};
-    const messages = this.state.data.messages.push(newMessage)
-    this.setState({messages: messages})
-  }, 1000);
-}
+  componentDidMount(){
+    this.socket = new WebSocket ('ws://localhost:4000/');
 
+    this.socket.onopen = function (event) {
+      console.log("YOFACE Has been Connected")
+    }
+
+   
+
+  };
 
 	handleUserMessage(e) {
 		const newID = (data.messages.length + 1)
@@ -43,7 +48,6 @@ class App extends Component {
 		this.setState({messages: data.messages})
 
 	}
-
 
 
   render() {
@@ -56,12 +60,11 @@ class App extends Component {
       			
       			<MessageList msgdata={this.state.data.messages}/>
       	
-      	<footer>
+
       		<ChatBar 
       		usrName={this.state.data.currentUser}
       		handleUserMessage={this.handleUserMessage.bind(this)}
       		/>
-      	</footer>
 
       </div>
     );

@@ -1,30 +1,25 @@
 (function () {
 	var socket = new WebSocket('ws://localhost:3000/', "protocolOne");
 
-	socket.onopen = function (event) {
-  socket.send("Intiial Connection"); 
+	
 
+  const messageList = document.getElementById('message');
+  const userCount 	= document.getElementById('user-count') 
 
-  
-	};
-
-
-
-
-})};
-
-
-
-
-// Send text to all users through the server
+  // Send text to all users through the server
 function sendText() {
   // Construct a msg object containing the data the server needs to process the message from the chat client.
   var msg = {
     type: "message",
     text: document.getElementById("text").value,
     id:   clientID,
-    date: Date.now()
   };
+}};
+
+
+
+
+
 
   // Send the msg object as a JSON-formatted string.
   exampleSocket.send(JSON.stringify(msg));
@@ -33,12 +28,12 @@ function sendText() {
   document.getElementById("text").value = "";
 }
 
-exampleSocket.onmessage = function (event) {
+socket.onmessage = function (event) {
   console.log(event.data);
 }
 
 
-exampleSocket.onmessage = function(event) {
+socket.onmessage = function(event) {
   var f = document.getElementById("chatbox").contentDocument;
   var text = "";
   var msg = JSON.parse(event.data);
