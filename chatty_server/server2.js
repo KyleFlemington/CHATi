@@ -11,13 +11,22 @@ const server = express()
 
 const wss = new SocketServer({ server });
 
+
+//broadcast o all
+wss.broadcast = function broadcast(data) {
+  wss.clients.forEach(function each(client) {
+    client.send(data);
+  });
+};
+
+
 wss.on('connection', (ws) => {
   console.log('Client connected');
 
   ws.on('message', function incoming(message) {
-    console.log(JSON.parse(message));
+    wss.broadcast(message);
+    console.log('received', JSON.parse(message));
   });
 
-  ws.send('something');
   ws.on('close', () => console.log('Client disconnected'));
 });
