@@ -5,16 +5,14 @@ import MessageList from './MessageList.jsx';
 import uuid from 'node-uuid';
 
 var ws = new WebSocket('ws://localhost:4000/');
-var data = {
-      currentUser: {name: "Bob"},
-      messages: []
-};
-
 
 class App extends Component {
 	  constructor(props) {
     super(props);
-    this.state = {data}
+    this.state =  {
+      currentUser: {name: "Bob"},
+      messages: []
+    }
   }
 
   componentDidMount(){
@@ -24,8 +22,10 @@ class App extends Component {
 
       this.socket.onmessage = (event) => {
           
+          console.log(event);
           var incoMessage = JSON.parse(event.data)
-          var msgs = this.state.data.messages.push(incoMessage)
+
+          var msgs = this.state.messages.concat(incoMessage)
           this.setState({messages: msgs})
 
       }
@@ -37,17 +37,20 @@ class App extends Component {
     this.socket.send(JSON.stringify({
       type: 'postMessage',
       msgID: newID, 
-      username: this.state.data.currentUser.name, 
+      username: this.state.currentUser.name, 
       content: e
     }));
 	}
 
   updateUserName (username) { 
     let currentUser = { name: username };
-    let messages = this.state.data.messages
-    this.setState({data:{currentUser, messages}});
+    let messages = this.state.messages
+    this.setState({currentUser});
 
-
+    this.socket.send(JSON.stringify({
+      type: "postNotification",
+      content: ` ${this.state.currentUser.name} has changed their name to ${username} `
+    }));
   //   if (username !== currentUser){
   //   }
   //   this.socket.send(JSON.stringify({
@@ -68,11 +71,11 @@ class App extends Component {
       		</nav>
       			
       			<MessageList 
-            msgdata={this.state.data.messages}
+            msgdata={this.state.messages}
             />
       	
       		<ChatBar 
-      		usrName={this.state.data.currentUser}
+      		usrName={this.state.currentUser}
       		onMessageSent={this.sendMessageToServer.bind(this)}
           updateUserName={this.updateUserName.bind(this)}
       		/>

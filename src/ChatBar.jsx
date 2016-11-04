@@ -30,7 +30,7 @@ class ChatBar extends Component {
   	
 	}
   	handleUserName(e) {
-  		this.setState({data: {name:event.target.value}});
+  		this.setState({name:event.target.value});
 
   	}
   
