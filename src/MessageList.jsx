@@ -6,7 +6,6 @@ class MessageList extends Component {
 	render() {
 		return (
 			<div id="message-list">
-			
 			{this.props.msgdata.map(function(message){
 				return <Message 
 				username={message.username} 
@@ -14,7 +13,8 @@ class MessageList extends Component {
 				key={message.msgID} 
 				/>
 			})}
-			</div>	
+			</div>
+			/* <div class="message system"></div> */
 		);
 	}		
 }

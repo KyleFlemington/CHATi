@@ -23,10 +23,22 @@ wss.broadcast = function broadcast(data) {
 wss.on('connection', (ws) => {
   console.log('Client connected');
 
+
+
+
   ws.on('message', function incoming(message) {
     wss.broadcast(message);
     console.log('received', JSON.parse(message));
   });
+
+
+  ws.on ('incomingMessage',  (ncEvent) => {
+    wss.broadcast(ncEvent);
+    console.log(" changed their name", JSON.parse(ncEvent.data));
+  });
+
+
+
 
   ws.on('close', () => console.log('Client disconnected'));
 });

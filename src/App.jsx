@@ -2,53 +2,62 @@ import React, {Component} from 'react';
 import ChatBar from './Chatbar.jsx';
 import Message from './Message.jsx';
 import MessageList from './MessageList.jsx';
+import uuid from 'node-uuid';
 
 var ws = new WebSocket('ws://localhost:4000/');
-
-
 var data = {
-	currentUser: {name: "Bob"},
-  messages: [
-    {
-      username: "Bob",
-      content: "Has anyone seen my marbles?",
-      msgID: 1,
-    },
-    {
-      username: "Anonymous",
-      content: "No, I think you lost them. You lost your marbles Bob. You lost them for good.",
-      msgID: 2,
-    }
-  ]
+      currentUser: {name: "Bob"},
+      messages: []
 };
 
 
 class App extends Component {
 	  constructor(props) {
     super(props);
-    this.state = {data};
-
+    this.state = {data}
   }
 
   componentDidMount(){
     this.socket = new WebSocket ('ws://localhost:4000/');
 
-    this.socket.onopen = function (event) {
-      console.log("YOFACE Has been Connected")
+    this.socket.onopen = (event) => {
+
+      this.socket.onmessage = (event) => {
+          
+          var incoMessage = JSON.parse(event.data)
+          var msgs = this.state.data.messages.push(incoMessage)
+          this.setState({messages: msgs})
+
+      }
     }
+  }
 
-   
-
-  };
-
-	handleUserMessage(e) {
-		const newID = (data.messages.length + 1)
-		console.log(this.state.data.currentUser)
-		const done = data.messages.push({msgID: newID, username: this.state.data.currentUser.name, content: e});
-		this.setState({messages: data.messages})
-
+	sendMessageToServer(e) {
+    const newID = uuid.v4()
+    this.socket.send(JSON.stringify({
+      type: 'postMessage',
+      msgID: newID, 
+      username: this.state.data.currentUser.name, 
+      content: e
+    }));
 	}
 
+  updateUserName (username) { 
+    let currentUser = { name: username };
+    let messages = this.state.data.messages
+    this.setState({data:{currentUser, messages}});
+
+
+  //   if (username !== currentUser){
+  //   }
+  //   this.socket.send(JSON.stringify({
+  //     type: 'postNotification',
+  //     upID: (),
+  //     content: currentUser
+  //   }));
+  // }
+
+  }
 
   render() {
     return (
@@ -58,12 +67,14 @@ class App extends Component {
       			<h1>CHATi</h1>
       		</nav>
       			
-      			<MessageList msgdata={this.state.data.messages}/>
+      			<MessageList 
+            msgdata={this.state.data.messages}
+            />
       	
-
       		<ChatBar 
       		usrName={this.state.data.currentUser}
-      		handleUserMessage={this.handleUserMessage.bind(this)}
+      		onMessageSent={this.sendMessageToServer.bind(this)}
+          updateUserName={this.updateUserName.bind(this)}
       		/>
 
       </div>
