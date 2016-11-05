@@ -4,14 +4,14 @@ import Message from './Message.jsx';
 import MessageList from './MessageList.jsx';
 import uuid from 'node-uuid';
 
-var ws = new WebSocket('ws://localhost:4000/');
 
 class App extends Component {
 	  constructor(props) {
     super(props);
     this.state =  {
       currentUser: {name: "Bob"},
-      messages: []
+      messages: [],
+      totalUsers: 0
     }
   }
 
@@ -21,13 +21,19 @@ class App extends Component {
     this.socket.onopen = (event) => {
 
       this.socket.onmessage = (event) => {
-          
-          console.log(event);
-          var incoMessage = JSON.parse(event.data)
+       
+        var incoMessage = JSON.parse(event.data)
 
+        switch(incoMessage.type) {
+        case 'userCount' :
+          this.setState({totalUsers: incoMessage.usersOnline.usersOnline})
+
+
+        break
+        case 'postMessage' :
           var msgs = this.state.messages.concat(incoMessage)
           this.setState({messages: msgs})
-
+        }
       }
     }
   }
@@ -50,17 +56,8 @@ class App extends Component {
     this.socket.send(JSON.stringify({
       type: "postNotification",
       content: ` ${this.state.currentUser.name} has changed their name to ${username} `
-    }));
-  //   if (username !== currentUser){
-  //   }
-  //   this.socket.send(JSON.stringify({
-  //     type: 'postNotification',
-  //     upID: (),
-  //     content: currentUser
-  //   }));
-  // }
-
-  }
+    }));  
+};
 
   render() {
     return (
@@ -68,6 +65,13 @@ class App extends Component {
     			
     			<nav>
       			<h1>CHATi</h1>
+
+
+            <h4 id="user-count">{this.state.totalUsers} users online
+
+            </h4>
+
+                          
       		</nav>
       			
       			<MessageList 
