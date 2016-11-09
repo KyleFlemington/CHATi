@@ -34,7 +34,7 @@ wss.on('connection', (ws) => {
   wss.broadcast(JSON.stringify(userCountMessage));
   console.log('Client connected', usersOnline);
 
-  ws.on('message', function incoming(message) {
+  ws.on('message', function incoming(message) { 
     console.log("got a message, gonna broadcast this:", message);
     wss.broadcast(message);
     console.log('received', JSON.parse(message));

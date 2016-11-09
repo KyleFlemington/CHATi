@@ -54,7 +54,7 @@ class App extends Component {
     this.setState({currentUser});
 
     this.socket.send(JSON.stringify({
-      type: "postNotification",
+      type: "postMessage",
       content: ` ${this.state.currentUser.name} has changed their name to ${username} `
     }));  
 };
