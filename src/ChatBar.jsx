@@ -20,6 +20,8 @@ class ChatBar extends Component {
   handleUserEnter(e) {
   	e.preventDefault()
   		this.props.onMessageSent(e.target.submitbutton.value);
+  	var fresh = document.getElementById("new-message")
+  	fresh.reset();
   }
 
 

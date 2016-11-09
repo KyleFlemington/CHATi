@@ -38,15 +38,17 @@ class App extends Component {
     }
   }
 
+
+
 	sendMessageToServer(e) {
-    const newID = uuid.v4()
     this.socket.send(JSON.stringify({
       type: 'postMessage',
-      msgID: newID, 
       username: this.state.currentUser.name, 
       content: e
     }));
 	}
+
+
 
   updateUserName (username) { 
     let currentUser = { name: username };

@@ -1,7 +1,6 @@
 const express = require('express');
 const SocketServer = require('ws').Server;
-
-
+const uuid = require('node-uuid');
 
 const PORT = 4000;
 
@@ -34,11 +33,19 @@ wss.on('connection', (ws) => {
   wss.broadcast(JSON.stringify(userCountMessage));
   console.log('Client connected', usersOnline);
 
-  ws.on('message', function incoming(message) { 
-    console.log("got a message, gonna broadcast this:", message);
-    wss.broadcast(message);
-    console.log('received', JSON.parse(message));
+
+
+
+  
+  ws.on('message', function incoming(message) {
+    console.log("got this message from some client:", message);
+    message = JSON.parse(message);
+    message.msgID = uuid.v1();
+    console.log('now we should jsonify and send this:', message)
+    wss.broadcast(JSON.stringify(message));
   });
+
+
 
 
   ws.on ('incomingMessage',  (ncEvent) => {
